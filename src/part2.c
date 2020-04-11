@@ -4,7 +4,7 @@
 
 #define MAX_SIZE 1024
 #define BASE_PATTERN_LEN 4
-#define COPIES 10000
+#define COPIES 1
 #define MAX_MEGA_SIZE (MAX_SIZE*COPIES)
 
 int output_for_element(int * current, int length, int * base_pattern, int base_pattern_length, int element_number)
@@ -27,6 +27,7 @@ void copy_next_to_current(int * current, int * next, int length)
     for (int i=0; i<length; i++)
     {
         current[i]=next[i];
+        next[i]=0;
     }
 }
 
@@ -82,6 +83,7 @@ int main (int argc, char * argv[])
         for (int j=0; j<COPIES; j++)
         {
             current[j*input_len+i]=buffer[i]-'0';
+            next[j*input_len+i]=0;
         }
     }
     
@@ -100,18 +102,29 @@ int main (int argc, char * argv[])
         {
             if (j%100==0)
                 printf("%d \n", j);
-            //build_pattern_for_element(j+1, pattern_for_element, input_len*COPIES, base_pattern, BASE_PATTERN_LEN);
-            next[j]=output_for_element(current, input_len*COPIES, base_pattern, BASE_PATTERN_LEN, j+1);
-//            printf("  element %d goes from %d to %d\n", j+1, current[j], next[j]);
+
+            printf("Element Number %d\n", j+1);
+            for (int k=0; k<input_len*COPIES; k++)
+            {
+                int offset=((k+1)/(j+1))%BASE_PATTERN_LEN;
+                printf(" offset for k=%d is %d\n", k, offset);
+                int pattern_value=base_pattern[offset];
+                printf(" pattern value for k=%d is %d\n", k, pattern_value);
+                next[j]+=(current[k]*pattern_value);
+            }
+            for (int k=0; k<input_len*COPIES; k++)
+            {
+                next[k]=abs(next[k]);
+                printf("value of position %d is %d\n", k, next[k]);
+            }
         }
         printf("\n");
         copy_next_to_current(current, next, input_len*COPIES);
     }
     
-    int offset=
     printf("*****Final output (starting at offset %d: ", output_offset);
     for (int i=0; i<8; i++)
-        printf("%d", next[output_offset+i]);
+        printf("%d", current[output_offset+i]);
     printf("\n");
     
     free(current);
