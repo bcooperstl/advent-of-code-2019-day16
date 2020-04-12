@@ -8,6 +8,19 @@
 #define COPIES 10
 #define MAX_MEGA_SIZE (MAX_SIZE*COPIES)
 
+int gcd(int a, int b)
+{
+    int temp;
+    while (b != 0)
+    {
+        temp = a % b;
+
+        a = b;
+        b = temp;
+    }
+    return a;
+}
+
 void build_pattern_for_element(int element_number, int * output, int output_length, int * base_pattern, int base_pattern_length)
 {
     int base_index=0;
@@ -24,7 +37,51 @@ void build_pattern_for_element(int element_number, int * output, int output_leng
 //    printf("\n");
 }
 
-void calculate_sums(int * current, int ** range_sums, int length)
+void calculate_sum(int ** range_sums, int single_length, int from, int to)
+{
+    int sum=0;
+    int from_copy_number=from/single_length;
+    int to_copy_number=to/single_length;
+    int from_offset=from%single_length;
+    int to_offset=to%single_length;
+    int full_copies=to_copy_number-from_copy_number;
+
+    if (full_copies==0)
+    {
+        return range_sums[from_offset][to_offset];
+    }
+    
+    if (from_offset > 0)
+        sum+=range_sums[from_offset][single_length-1]; // add the portion to get to the next whole run. only needs to be done if the request doesn't start on a whole range
+
+    sum+=(range_sums[0][single_length-1]*full_copies); // add all the copies of the next whole run
+    
+    if (to_offset < (single_length-1)
+        sum+=range_sums[0][to_offset]; // add the portion for after the whole runs. only needs to be done if the request doesn't end at a whole run
+    return sum%10;
+}
+
+void calculate_cycle_sum(int ** range_sums, int single_length, int element_number, int * base_pattern, int base_pattern_length)
+{
+    int cycle_length=(element_number*base_pattern_length)/gcd(element_number,base_pattern_length);
+    
+}
+
+int calculate_element_sum()
+{
+    // different cases:
+    //    full cycles + remainder (see last 4 cases)
+    //       occurs when element number * 4 < big_length
+    //    zeroes, then positives, then zeros, then negatives, then one last zero;
+    //       element number * 4 = big length
+    //    zeroes, positives, zeros, some negatives
+    //       element number 
+    //    zeroes, all positives, zero or more zeroes
+    //    zereos, some positives
+    // case 1 - 
+}
+
+void precalculate_sums(int * current, int ** range_sums, int length)
 {
     for (int i=0; i<length; i++)
     {
@@ -52,6 +109,7 @@ void calculate_sums(int * current, int ** range_sums, int length)
     {
         for (int j=0; j<length; j++)
         {
+            range_sums[i][j]=range_sums[i][j]%10; // only care about the last digit.
             printf("The sum from terms %d to %d is %d\n", i+1, j+1, range_sums[i][j]);
         }
     }
@@ -79,19 +137,6 @@ void copy_next_to_current(int * current, int * next, int length)
         current[i]=next[i];
         next[i]=0;
     }
-}
-
-int gcd(int a, int b)
-{
-    int temp;
-    while (b != 0)
-    {
-        temp = a % b;
-
-        a = b;
-        b = temp;
-    }
-    return a;
 }
 
 int main (int argc, char * argv[])
@@ -168,7 +213,7 @@ int main (int argc, char * argv[])
     for (int i=0; i<num_phases; i++)
     {
         printf("Phase %d:\n", i);
-        calculate_sums(current, range_sums, input_len);
+        precalculate_sums(current, range_sums, input_len);
 
         for (int j=0; j<input_len*COPIES; j++)
         {
