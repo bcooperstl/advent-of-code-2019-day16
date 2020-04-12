@@ -4,8 +4,25 @@
 
 #define MAX_SIZE 1024
 #define BASE_PATTERN_LEN 4
-#define COPIES 1
+#define COPIES 10000
+//#define COPIES 1
 #define MAX_MEGA_SIZE (MAX_SIZE*COPIES)
+
+void build_pattern_for_element(int element_number, int * output, int output_length, int * base_pattern, int base_pattern_length)
+{
+    int base_index=0;
+//    printf("Element number %d generates pattern: ", element_number);
+    for (int i=0; i<output_length; i++)
+    {
+        if ((i+1)%element_number==0)
+            base_index++;
+        if (base_index==base_pattern_length)
+            base_index=0;
+        output[i]=base_pattern[base_index];
+//        printf("%d ", output[i]);
+    }
+//    printf("\n");
+}
 
 int output_for_element(int * current, int length, int * base_pattern, int base_pattern_length, int element_number)
 {
@@ -29,6 +46,19 @@ void copy_next_to_current(int * current, int * next, int length)
         current[i]=next[i];
         next[i]=0;
     }
+}
+
+int gcd(int a, int b)
+{
+    int temp;
+    while (b != 0)
+    {
+        temp = a % b;
+
+        a = b;
+        b = temp;
+    }
+    return a;
 }
 
 int main (int argc, char * argv[])
@@ -78,6 +108,7 @@ int main (int argc, char * argv[])
     }
     
     input_len=strlen(buffer);
+    printf("input_len is %d\n", input_len);
     for (int i=0; i<input_len; i++)
     {
         for (int j=0; j<COPIES; j++)
@@ -87,35 +118,42 @@ int main (int argc, char * argv[])
         }
     }
     
-    //output_offset=(current[0]*1000000)+
-    //              (current[1]* 100000)+
-    //              (current[2]*  10000)+
-    //              (current[3]*   1000)+
-    //              (current[4]*    100)+
-    //              (current[5]*     10)+
-    //              (current[6]*      1);
+    output_offset=(current[0]*1000000)+
+                  (current[1]* 100000)+
+                  (current[2]*  10000)+
+                  (current[3]*   1000)+
+                  (current[4]*    100)+
+                  (current[5]*     10)+
+                  (current[6]*      1);
+    
+    //TODO: comment this out
+    //output_offset=0;
     
     for (int i=0; i<num_phases; i++)
     {
         printf("Phase %d:\n", i);
         for (int j=0; j<input_len*COPIES; j++)
         {
-            if (j%100==0)
+            if (j%1000==0)
                 printf("%d \n", j);
-
-            printf("Element Number %d\n", j+1);
-            for (int k=0; k<input_len*COPIES; k++)
+            // this needs to go to the lcm of j+1 and input_len
+            
+            int lcm=((j+1)*BASE_PATTERN_LEN)/gcd(j+1,BASE_PATTERN_LEN);
+            //printf("Element Number %d\n", j+1);
+            //printf(" %d goes from %d to %d\n", j, 0, lcm);
+            for (int k=j; k<lcm; k++)
             {
-                int offset=((k+1)/(j+1))%BASE_PATTERN_LEN;
-                printf(" offset for k=%d is %d\n", k, offset);
-                int pattern_value=base_pattern[offset];
-                printf(" pattern value for k=%d is %d\n", k, pattern_value);
-                next[j]+=(current[k]*pattern_value);
+                //int offset=((k+1)/(j+1))%BASE_PATTERN_LEN;
+                //printf(" offset for k=%d is %d\n", k, offset);
+                //int pattern_value=base_pattern[offset];
+                //printf(" pattern value for k=%d is %d\n", k, pattern_value);
+                //next[j]+=(current[k]*pattern_value);
+                next[j]+=(current[k]*base_pattern[((k+1)/(j+1))%BASE_PATTERN_LEN]);
             }
             for (int k=0; k<input_len*COPIES; k++)
             {
-                next[k]=abs(next[k]);
-                printf("value of position %d is %d\n", k, next[k]);
+                next[k]=abs(next[k]%10);
+                //printf("value of position %d is %d\n", k, next[k]);
             }
         }
         printf("\n");
