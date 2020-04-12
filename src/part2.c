@@ -4,8 +4,8 @@
 
 #define MAX_SIZE 1024
 #define BASE_PATTERN_LEN 4
-#define COPIES 10000
-//#define COPIES 1
+//#define COPIES 10000
+#define COPIES 10
 #define MAX_MEGA_SIZE (MAX_SIZE*COPIES)
 
 void build_pattern_for_element(int element_number, int * output, int output_length, int * base_pattern, int base_pattern_length)
@@ -22,6 +22,39 @@ void build_pattern_for_element(int element_number, int * output, int output_leng
 //        printf("%d ", output[i]);
     }
 //    printf("\n");
+}
+
+void calculate_sums(int * current, int ** range_sums, int length)
+{
+    for (int i=0; i<length; i++)
+    {
+        for (int j=0; j<length; j++)
+        {
+            range_sums[i][j]=0;
+        }
+    }
+    for (int i=0; i<length; i++)
+    {
+        // iterator over current
+        for (int j=0; j<length; j++)
+        {
+            for (int k=0; k<length; k++)
+            {
+                if (i>=j && i<=k && j<=k)
+                {
+                    range_sums[j][k]+=current[i];
+                }
+            }
+        }
+    }
+
+    for (int i=0; i<length; i++)
+    {
+        for (int j=0; j<length; j++)
+        {
+            printf("The sum from terms %d to %d is %d\n", i+1, j+1, range_sums[i][j]);
+        }
+    }
 }
 
 int output_for_element(int * current, int length, int * base_pattern, int base_pattern_length, int element_number)
@@ -72,6 +105,9 @@ int main (int argc, char * argv[])
     int * next=malloc(sizeof(int) * MAX_MEGA_SIZE);
     int base_pattern[BASE_PATTERN_LEN]={0,1,0,-1};
     int * pattern_for_element=malloc(sizeof(int) * MAX_MEGA_SIZE);
+    int ** range_sums=malloc(sizeof(int *)*MAX_SIZE);
+    for (int i=0; i<MAX_SIZE; i++)
+        range_sums[i]=malloc(sizeof(int)*MAX_SIZE);
     int output_offset=0;
     
     memset(&buffer, '\0', sizeof(buffer));
@@ -127,11 +163,13 @@ int main (int argc, char * argv[])
                   (current[6]*      1);
     
     //TODO: comment this out
-    //output_offset=0;
+    output_offset=0;
     
     for (int i=0; i<num_phases; i++)
     {
         printf("Phase %d:\n", i);
+        calculate_sums(current, range_sums, input_len);
+
         for (int j=0; j<input_len*COPIES; j++)
         {
             if (j%1000==0)
@@ -168,6 +206,10 @@ int main (int argc, char * argv[])
     free(current);
     free(next);
     free(pattern_for_element);
+    for (int i=0; i<MAX_SIZE; i++)
+        free(range_sums[i]);
+    free(range_sums);
+
     
     return 0;
 }
