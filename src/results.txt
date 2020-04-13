@@ -4,23 +4,7 @@
         01234567 89012345 67890123 45678901 23456789 01234567 89012345 67890123 45678901 23456789
 input : 12345678 12345678 12345678 12345678 12345678 12345678 12345678 12345678 12345678 12345678
 row 21: 00000000 00000000 00001111 11111111 11111111 10000000 00000000 000000-- -------- --------
-
+row 22: 00000000 00000000 00000111 11111111 11111111 11100000 00000000 00000000 0------- --------
                                                                                            
 part 1: 00408186 46287718 28602804 62005584 59661140 09740592 43184936 87528370 21962714 65306158
-part 2: 00408186 46287718 28602004 02227204 98401266 65266102 69082140 85020300 23280782 83662386
-
-calculating sum no_cycles for element 21
-  positive calculated from 20 to 41
-    rs: single_length 8 from 20 (copy=2 offset=4) to 41 (copy=5 offset=1)
-    rs: adding 6 to get the end of the from copy (4 to 7)
-    rs: adding 3 to get the start of the to copy (0 to 1)
-    rs: adding 2 full copies of value 6 (from 0 to 7)
-    rs: returning final value of 1
-  negative calculated from 62 to 79
-    rs: single_length 8 from 62 (copy=7 offset=6) to 79 (copy=9 offset=7)
-    rs: adding 5 to get the end of the from copy (6 to 7)
-    rs: adding 6 to get the start of the to copy (0 to 7)
-    rs: adding 1 full copies of value 6 (from 0 to 7)
-    rs: returning final value of 7
-  total sum is -6 from positive sum 1 and negative sum 7
-  returning 6 for total sum
+part 2: 00408186 46287718 28602804 62005584 59661140 09740592 43184936 87528370 21962714 65306158

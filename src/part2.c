@@ -133,7 +133,7 @@ int calculate_sum_no_cycles(int * current, int input_length, int element_number,
         negative_end_position = (input_length*COPIES)-1;
     }
     
-    int total_sum;
+    int total_sum=0;
     printf("  positive calculated from %d to %d\n", positive_start_position, positive_end_position);
     int positive_sum=calculate_sum_with_range_sums(range_sums, input_length, positive_start_position, positive_end_position);
     total_sum+=positive_sum;
@@ -142,7 +142,7 @@ int calculate_sum_no_cycles(int * current, int input_length, int element_number,
     if (include_negatives==1)
     {
         printf("  negative calculated from %d to %d\n", negative_start_position, negative_end_position);
-        negative_sum=calculate_sum_with_range_sums(range_sums, input_length, negative_start_position, negative_end_position);;
+        negative_sum=calculate_sum_with_range_sums(range_sums, input_length, negative_start_position, negative_end_position);
         total_sum-=negative_sum;
         printf("  total sum is %d from positive sum %d and negative sum %d\n", total_sum, positive_sum, negative_sum);
     }
